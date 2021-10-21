@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Posts</title>
+    <style>
+        div {
+            background-color: aqua;
+            padding: 20px;
+            margin: 10px;
+            height: 50px;
+        }        
+        .hide{
+           float: right;
+        }
+
+        @keyframes move{
+            0%{
+                opacity: 1;
+                height: 100%;
+                padding: 100%;
+                margin: 100%;
+
+
+            }
+            75%{
+                opacity: 0;
+                height: 100%;
+                padding: 100%;
+                margin: 100%;
+
+            }
+            100%{
+                opacity: 0;
+                height: 0%;
+                padding: 0%;
+                margin: 0%;
+
+            }
+        }
+        div{
+            animation-name: move;
+            animation-duration: 1s;
+            animation-direction: forwards;
+        }
+    </style>
+    <script>
+        let counter = 1;
+
+        const quantity = 20 ; 
+ 
+
+        document.addEventListener("DOMContentLoaded", load); 
+
+        window.onscroll = ()=>{
+            if(window.innerHeight + window.scrollY >= document.body.offsetHeight){
+                load();
+            }
+        }
+
+        window.addEventListener("click",()=>{
+            const element =event.target ;
+            if(element.className == "hide"){
+                element.parentElement.remove();
+            }; 
+        });
+
+         
+        function load(){
+            const start  = counter ; 
+            const end = start+quantity-1;
+            counter = end+1;
+            fetch(`http://127.0.0.1:8000/posts/start${start}&end${end}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(add_post);          
+            })
+        };
+
+        function add_post(contents){
+            const post = document.createElement("div");
+            post.className = "post";
+            post.innerHTML = contents ;
+
+            const hide_button = document.createElement("button");
+            hide_button.innerHTML = "Hide";
+            hide_button.className = "hide";
+            post.append(hide_button);
+            document.querySelector('p').append(post);
+        }
+    </script>
+</head>
+<body>
+    <center> <h1>Posts</h1></center>
+    <p id="posts">
+    </p>
+</body>
+</html>
